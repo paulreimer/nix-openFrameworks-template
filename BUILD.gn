@@ -1,0 +1,200 @@
+config("openFrameworks_config") {
+  defines = [
+    "USE_FMOD=0",
+  ]
+
+  include_dirs = [
+    "//openFrameworks/libs/openFrameworks",
+    "//openFrameworks/libs/openFrameworks/3d",
+    "//openFrameworks/libs/openFrameworks/app",
+    "//openFrameworks/libs/openFrameworks/communication",
+    "//openFrameworks/libs/openFrameworks/events",
+    "//openFrameworks/libs/openFrameworks/gl",
+    "//openFrameworks/libs/openFrameworks/graphics",
+    "//openFrameworks/libs/openFrameworks/math",
+    "//openFrameworks/libs/openFrameworks/sound",
+    "//openFrameworks/libs/openFrameworks/types",
+    "//openFrameworks/libs/openFrameworks/utils",
+    "//openFrameworks/libs/openFrameworks/video",
+  ]
+
+  cflags = string_split(getenv("CFLAGS"))
+}
+
+config("openFrameworks_platform_specific_config") {
+  if (target_os == "mac") {
+    cflags = [ "-fobjc-arc" ]
+    cflags_cc = [ "-ObjC++", "-fobjc-arc" ]
+
+    ldflags = [
+      "-F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/",
+      "-framework", "Accelerate",
+      "-framework", "AVFoundation",
+      "-framework", "AppKit",
+      "-framework", "CoreFoundation",
+      "-framework", "CoreMedia",
+      "-framework", "CoreServices",
+      "-framework", "CoreText",
+      "-framework", "CoreVideo",
+      "-framework", "OpenGL",
+    ]
+  }
+}
+
+config("openFrameworks_private_config") {
+  cflags = [
+    "-Wno-deprecated-declarations",
+    "-Wno-conversion-null",
+    "-Wno-format-security",
+  ]
+  if (target_os == "linux") {
+    cflags += [
+      "-Wno-volatile",
+    ]
+  }
+  if (target_os == "mac") {
+    cflags += [
+      "-Wno-implicit-const-int-float-conversion",
+    ]
+  }
+
+  ldflags = string_split(getenv("LDFLAGS"))
+
+  libs = [
+    "GLEW",
+    "cairo",
+    "curl",
+    "glfw",
+    "freeimage",
+    "freetype",
+    "pugixml",
+    "rtaudio",
+    "tess2",
+    "uriparser",
+  ]
+  if (target_os == "linux") {
+    libs += [
+      "GL",
+      "X11",
+      "fontconfig",
+      "glib-2.0",
+      "gobject-2.0",
+      "gstapp-1.0",
+      "gstbase-1.0",
+      "gstreamer-1.0",
+      "gstvideo-1.0",
+      "kissfft-double",
+      "openal",
+      "sndfile",
+      "udev",
+    ]
+  }
+}
+
+static_library("openFrameworks") {
+  public_configs = [
+    ":openFrameworks_config",
+  ]
+  configs = [
+    ":openFrameworks_private_config",
+  ]
+
+  sources = [
+    "openFrameworks/libs/openFrameworks/3d/of3dPrimitives.cpp",
+    "openFrameworks/libs/openFrameworks/3d/of3dUtils.cpp",
+    "openFrameworks/libs/openFrameworks/3d/ofCamera.cpp",
+    "openFrameworks/libs/openFrameworks/3d/ofEasyCam.cpp",
+    "openFrameworks/libs/openFrameworks/3d/ofNode.cpp",
+    "openFrameworks/libs/openFrameworks/app/ofAppNoWindow.cpp",
+    "openFrameworks/libs/openFrameworks/app/ofAppRunner.cpp",
+    "openFrameworks/libs/openFrameworks/app/ofBaseApp.cpp",
+    "openFrameworks/libs/openFrameworks/app/ofMainLoop.cpp",
+    "openFrameworks/libs/openFrameworks/communication/ofArduino.cpp",
+    "openFrameworks/libs/openFrameworks/communication/ofSerial.cpp",
+    "openFrameworks/libs/openFrameworks/events/ofEvents.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofBufferObject.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofCubeMap.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofFbo.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofGLProgrammableRenderer.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofGLRenderer.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofGLUtils.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofLight.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofMaterial.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofShader.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofShadow.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofTexture.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofVbo.cpp",
+    "openFrameworks/libs/openFrameworks/gl/ofVboMesh.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/of3dGraphics.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofBitmapFont.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofCairoRenderer.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofGraphics.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofGraphicsBaseTypes.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofGraphicsCairo.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofImage.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofPath.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofPixels.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofRendererCollection.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofTessellator.cpp",
+    "openFrameworks/libs/openFrameworks/graphics/ofTrueTypeFont.cpp",
+    "openFrameworks/libs/openFrameworks/math/ofMath.cpp",
+    "openFrameworks/libs/openFrameworks/math/ofMatrix3x3.cpp",
+    "openFrameworks/libs/openFrameworks/math/ofMatrix4x4.cpp",
+    "openFrameworks/libs/openFrameworks/math/ofQuaternion.cpp",
+    "openFrameworks/libs/openFrameworks/math/ofVec2f.cpp",
+    "openFrameworks/libs/openFrameworks/math/ofVec4f.cpp",
+    "openFrameworks/libs/openFrameworks/sound/ofOpenALSoundPlayer.cpp",
+    "openFrameworks/libs/openFrameworks/sound/ofRtAudioSoundStream.cpp",
+    "openFrameworks/libs/openFrameworks/sound/ofSoundBaseTypes.cpp",
+    "openFrameworks/libs/openFrameworks/sound/ofSoundBuffer.cpp",
+    "openFrameworks/libs/openFrameworks/sound/ofSoundPlayer.cpp",
+    "openFrameworks/libs/openFrameworks/sound/ofSoundStream.cpp",
+    "openFrameworks/libs/openFrameworks/types/ofBaseTypes.cpp",
+    "openFrameworks/libs/openFrameworks/types/ofColor.cpp",
+    "openFrameworks/libs/openFrameworks/types/ofParameter.cpp",
+    "openFrameworks/libs/openFrameworks/types/ofParameterGroup.cpp",
+    "openFrameworks/libs/openFrameworks/types/ofRectangle.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofFileUtils.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofFpsCounter.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofLog.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofMatrixStack.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofThread.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofTimer.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofURLFileLoader.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofUtils.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofXml.cpp",
+    "openFrameworks/libs/openFrameworks/video/ofVideoGrabber.cpp",
+    "openFrameworks/libs/openFrameworks/video/ofVideoPlayer.cpp",
+  ]
+}
+
+static_library("openFrameworks_platform_specific") {
+  public_configs = [
+    ":openFrameworks_platform_specific_config",
+  ]
+  configs = [
+    ":openFrameworks_config",
+    ":openFrameworks_private_config",
+  ]
+
+  sources = [
+    "openFrameworks/libs/openFrameworks/app/ofAppGLFWWindow.cpp",
+    "openFrameworks/libs/openFrameworks/utils/ofSystemUtils.cpp",
+  ]
+
+  if (target_os == "linux") {
+    sources += [
+      "openFrameworks/libs/openFrameworks/video/ofGstUtils.cpp",
+      "openFrameworks/libs/openFrameworks/video/ofGstVideoGrabber.cpp",
+      "openFrameworks/libs/openFrameworks/video/ofGstVideoPlayer.cpp",
+    ]
+  }
+
+  if (target_os == "mac") {
+    sources += [
+      "openFrameworks/libs/openFrameworks/video/ofAVFoundationGrabber.mm",
+      "openFrameworks/libs/openFrameworks/video/ofAVFoundationPlayer.mm",
+      "openFrameworks/libs/openFrameworks/video/ofAVFoundationVideoPlayer.m",
+    ]
+  }
+}
