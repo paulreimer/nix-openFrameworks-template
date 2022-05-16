@@ -7,7 +7,9 @@ void ofApp::setup() {}
 void ofApp::update() {}
 
 //--------------------------------------------------------------
-void ofApp::draw() {}
+void ofApp::draw() {
+  ofDrawBitmapString("Hello world!", 20, 20);
+}
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {}
