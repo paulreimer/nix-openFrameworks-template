@@ -21,5 +21,8 @@
 
         # nix run
         apps.default = flake-utils.lib.mkApp { drv = packages.default; };
+
+        # nix develop
+        devShell = import ./shell.nix { inherit pkgs; inherit packages; };
       });
 }
