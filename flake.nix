@@ -16,8 +16,11 @@
           ];
         };
       in rec {
+        # deps
+        packages.libopenFrameworks = import ./libopenFrameworks.nix { inherit pkgs; };
+
         # nix build
-        packages.default = import ./default.nix { inherit pkgs; };
+        packages.default = import ./default.nix { inherit pkgs; inherit packages; };
 
         # nix run
         apps.default = flake-utils.lib.mkApp { drv = packages.default; };

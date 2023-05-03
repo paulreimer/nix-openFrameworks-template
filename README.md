@@ -10,8 +10,9 @@ The application executable will be in `result/bin/`.
 
 ### Directly using `gn`
 ```
-nix develop
+nix develop ".?submodules=1"
 gn gen out
+ninja -C out openFrameworks
 ninja -C out
 ```
 

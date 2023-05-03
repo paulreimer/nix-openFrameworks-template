@@ -1,4 +1,9 @@
 executable("emptyExample") {
+  configs = [
+    ":openFrameworks_config",
+    ":openFrameworks_private_config",
+  ]
+
   sources = [
     "src/main.cpp",
     "src/ofApp.cpp",
@@ -8,9 +13,9 @@ executable("emptyExample") {
     "//src",
   ]
 
-  deps = [
-    ":openFrameworks",
-    ":openFrameworks_platform_specific",
+  libs = [
+    "openFrameworks",
+    "openFrameworks_platform_specific",
   ]
 }
 
@@ -35,13 +40,8 @@ config("openFrameworks_config") {
   ]
 
   cflags = string_split(getenv("CFLAGS"))
-}
 
-config("openFrameworks_platform_specific_config") {
   if (target_os == "mac") {
-    cflags = [ "-fobjc-arc" ]
-    cflags_cc = [ "-ObjC++", "-fobjc-arc" ]
-
     ldflags = [
       "-F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/",
       "-framework", "Accelerate",
@@ -54,6 +54,13 @@ config("openFrameworks_platform_specific_config") {
       "-framework", "CoreVideo",
       "-framework", "OpenGL",
     ]
+  }
+}
+
+config("openFrameworks_platform_specific_config") {
+  if (target_os == "mac") {
+    cflags = [ "-fobjc-arc" ]
+    cflags_cc = [ "-ObjC++", "-fobjc-arc" ]
   }
 }
 
@@ -113,6 +120,10 @@ static_library("openFrameworks") {
   ]
   configs = [
     ":openFrameworks_private_config",
+  ]
+
+  deps = [
+    ":openFrameworks_platform_specific",
   ]
 
   sources = [
@@ -179,18 +190,18 @@ static_library("openFrameworks") {
     "openFrameworks/libs/openFrameworks/utils/ofURLFileLoader.cpp",
     "openFrameworks/libs/openFrameworks/utils/ofUtils.cpp",
     "openFrameworks/libs/openFrameworks/utils/ofXml.cpp",
+    # "openFrameworks/libs/openFrameworks/video/ofDirectShowGrabber.cpp",
+    # "openFrameworks/libs/openFrameworks/video/ofDirectShowPlayer.cpp",
     "openFrameworks/libs/openFrameworks/video/ofVideoGrabber.cpp",
     "openFrameworks/libs/openFrameworks/video/ofVideoPlayer.cpp",
   ]
 }
 
 static_library("openFrameworks_platform_specific") {
-  public_configs = [
-    ":openFrameworks_platform_specific_config",
-  ]
   configs = [
     ":openFrameworks_config",
     ":openFrameworks_private_config",
+    ":openFrameworks_platform_specific_config",
   ]
 
   sources = [
